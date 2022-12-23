@@ -13,14 +13,14 @@ public class Gene {
 	ContinuousSpace<Object> space;
 	Grid<Object> grid;
 	Context context;
-	int numberOfInfectedCells;
+	TupleSpace tupleSpace;
 	
 	private static final double MOVE_DISTANCE = 0.5; // Set the distance to move each tick
 	private static final double EPSILON = 1; // Set a small value to add to the y coordinate
 	 
-	public Gene(Context context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
+	public Gene(Context context, ContinuousSpace<Object> space, Grid<Object> grid) {
+		this.tupleSpace = new TupleSpace();
 		this.context = context;
-		this.numberOfInfectedCells = numberOfInfectedCells;
 		this.space = space;
 		this.grid = grid;
 	}
@@ -68,7 +68,10 @@ public class Gene {
 		    
 			GridPoint currentGridLocation = this.grid.getLocation(this);
 			space.moveTo(this, currentGridLocation.getX(), currentGridLocation.getY(), currentGridLocation.getZ());
-		} else System.out.println("NCS");
+		} else {
+			this.tupleSpace.out("ribosome_call", grid.getLocation(this));
+			context.remove(this);
+		}
 	}
 	
 }

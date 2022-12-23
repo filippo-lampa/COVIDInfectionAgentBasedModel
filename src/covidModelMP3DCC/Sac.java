@@ -22,11 +22,9 @@ public class Sac {
 	ContinuousSpace<Object>space;
 	Grid<Object> grid;
 	Context context;
-	int numberOfInfectedCells;
 	
-	public Sac(Context context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
+	public Sac(Context context, ContinuousSpace<Object> space, Grid<Object> grid) {
 		this.context = context;
-		this.numberOfInfectedCells = numberOfInfectedCells;
 		this.space = space;
 		this.grid = grid;
 		this.randomPoint = this.getRandomLocation();
@@ -69,7 +67,7 @@ public class Sac {
 			GridPoint currentGridLocation = this.grid.getLocation(this);
 			space.moveTo(this, currentGridLocation.getX(), currentGridLocation.getY(), currentGridLocation.getZ());
 		} else {
-			Gene newGene = new Gene(this.context, this.space, this.grid, this.numberOfInfectedCells);
+			Gene newGene = new Gene(this.context, this.space, this.grid);
 			context.add(newGene);
 			GridPoint myLocation = this.grid.getLocation(this);
 			this.grid.moveTo(newGene, myLocation.getX(),myLocation.getY(),myLocation.getZ());

@@ -12,7 +12,7 @@ public class TupleSpace {
 	}
 	
 	
-	public Tuple in(String name, Object object){
+	public Tuple in(String name){
 		Tuple chosenEntry = null;
 		for(Tuple currentEntry : this.space)
 			if(currentEntry.getName().equals(name))

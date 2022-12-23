@@ -15,7 +15,12 @@
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 											/>
-				<parameter name="numberOfInfectedCells" displayName="Number of infected cells" type="int" 
+				<parameter name="numberOfIngoingVirusCellsEachTimeTic" displayName="Number of ingoing virus cells at each time tic" type="int" 
+						defaultValue="4" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+											/>
+				<parameter name="numberOfOutgoingInfectedCells" displayName="Number of new outgoing virus cells" type="int" 
 						defaultValue="5" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"

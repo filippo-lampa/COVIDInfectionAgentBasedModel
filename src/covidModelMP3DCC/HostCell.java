@@ -9,6 +9,7 @@ import repast.simphony.context.space.grid.GridFactory;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -34,50 +35,48 @@ public class HostCell implements ContextBuilder<Object> {
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
  		Grid<Object> grid = gridFactory.createGrid("grid", context, GridBuilderParameters.multiOccupancyND( 
  				new SimpleGridAdder<Object>(), new InfiniteBorders<>(), 50, 50, 50));
+
  		
 		Parameters p = RunEnvironment.getInstance().getParameters();			
-		
-		String ingoingType = (String)p.getValue("ingoingType");
+
+		int numberOfIngoingVirusCellsEachTimeTic = (Integer)p.getValue("numberOfIngoingVirusCellsEachTimeTic");
 
 		int numberOfRibosomes = (Integer)p.getValue("numberOfRibosomes");
-		 
-		int numberOfInfectedCells = (Integer)p.getValue("numberOfInfectedCells");
+		
+		this.getIncomingInfectedCells(context, space, grid, numberOfIngoingVirusCellsEachTimeTic); 
+		
+		this.initializeRibosomes(numberOfRibosomes, context, space, grid);
 		
 		this.tupleSpace = new TupleSpace();
 		
 		this.tupleSpace.out("cellula", this);
-		
-		this.initializeRibosomes(numberOfRibosomes, context, space, grid);
-		this.initIngoingVirus(context, space, grid, numberOfInfectedCells, ingoingType);
+				
+		//this.initializeRibosomes(numberOfRibosomes, context, space, grid);
+		//this.initIngoingVirus(context, space, grid, numberOfInfectedCells, ingoingType);
 		
 		return context;
 	}
 	
-	private void initIngoingVirus(Context<Object> context, ContinuousSpace<Object> space, Grid grid, int numberOfInfectedCells, String ingoingType) {
-		//int randomEnteringChoice = RandomHelper.nextIntFromTo(0,1); 
-		if(ingoingType.equals("sac")) {
-			initializeSac(context, space, grid, numberOfInfectedCells);
-		} else initializeGenes(context, space, grid, numberOfInfectedCells);
-		
-	}
-	
-	private void initializeSac(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
-		Sac newSac = new Sac(context, space, grid, numberOfInfectedCells);
-		int x = RandomHelper.nextIntFromTo(60, 80);
-		int y = RandomHelper.nextIntFromTo(60, 80);
-		int z = RandomHelper.nextIntFromTo(60, 80);
-		context.add(newSac);
-		if(!space.getObjectsAt(x,y,z).iterator().hasNext()) {
-			space.moveTo(newSac,x,y,z);
-			grid.moveTo(newSac, x,y,z);
+	@ScheduledMethod(start = 1, interval = 7)
+	private void getIncomingInfectedCells(Context<Object> context, ContinuousSpace<Object> space, Grid grid, int numberOfIngoingVirusCellsEachTimeTic) {
+		VirusCell newVirusCell;
+		int x,y,z;
+		for(int i=0; i<numberOfIngoingVirusCellsEachTimeTic; i++) {	
+			newVirusCell = new VirusCell(context, space, grid, "ingoing");
+			x = RandomHelper.nextIntFromTo(60, 80);
+			y = RandomHelper.nextIntFromTo(60, 80);
+			z = RandomHelper.nextIntFromTo(60, 80);
+			context.add(newVirusCell);
+			if(!space.getObjectsAt(x,y,z).iterator().hasNext()) {
+				space.moveTo(newVirusCell,x,y,z);
+				grid.moveTo(newVirusCell, x,y,z);
+			}
 		}
-		System.out.println("Sac init position " + x + " " + y + " " + z);
 	}
-	
-	
+		
 	private void initializeRibosomes(int numberOfRibosomes, Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid) {
 		for(int i=0; i < numberOfRibosomes; i++) {
-			Ribosome newRibosome = new Ribosome(space, grid);
+			Ribosome newRibosome = new Ribosome(context, space, grid);
 			context.add(newRibosome);
 			int x = RandomHelper.nextIntFromTo(0, 50 - 1);
 			int y = RandomHelper.nextIntFromTo(0, 50 - 1);
@@ -89,18 +88,4 @@ public class HostCell implements ContextBuilder<Object> {
 		}
 	}
 	
-	private void initializeGenes(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
-		Gene newGene = new Gene(context, space, grid, numberOfInfectedCells);
-		int x = RandomHelper.nextIntFromTo(60, 80);
-		int y = RandomHelper.nextIntFromTo(60, 80);
-		int z = RandomHelper.nextIntFromTo(60, 80);
-		context.add(newGene);
-		if(!space.getObjectsAt(x,y,z).iterator().hasNext()) {
-			space.moveTo(newGene,x,y,z);
-			grid.moveTo(newGene, x,y,z);
-		}
-		System.out.println("Sac init position " + x + " " + y + " " + z);
-	}
-		
-
 }
