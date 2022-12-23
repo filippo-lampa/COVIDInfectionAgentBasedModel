@@ -1,5 +1,6 @@
 package covidModelMP3DCC;
 
+import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -11,12 +12,14 @@ public class Gene {
 
 	ContinuousSpace<Object> space;
 	Grid<Object> grid;
+	Context context;
 	int numberOfInfectedCells;
 	
 	private static final double MOVE_DISTANCE = 0.5; // Set the distance to move each tick
 	private static final double EPSILON = 1; // Set a small value to add to the y coordinate
 	 
-	public Gene(ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
+	public Gene(Context context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
+		this.context = context;
 		this.numberOfInfectedCells = numberOfInfectedCells;
 		this.space = space;
 		this.grid = grid;

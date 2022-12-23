@@ -19,8 +19,8 @@ import repast.simphony.space.grid.InfiniteBorders;
 import repast.simphony.space.grid.SimpleGridAdder;
 
 public class HostCell implements ContextBuilder<Object> {
-
-	private ArrayList<Object>tuplespace;
+	
+	TupleSpace tupleSpace;
 	
 	@Override
 	public Context build(Context<Object> context) {
@@ -37,26 +37,32 @@ public class HostCell implements ContextBuilder<Object> {
  		
 		Parameters p = RunEnvironment.getInstance().getParameters();			
 		
+		String ingoingType = (String)p.getValue("ingoingType");
+
 		int numberOfRibosomes = (Integer)p.getValue("numberOfRibosomes");
 		 
 		int numberOfInfectedCells = (Integer)p.getValue("numberOfInfectedCells");
 		
+		this.tupleSpace = new TupleSpace();
+		
+		this.tupleSpace.out("cellula", this);
+		
 		this.initializeRibosomes(numberOfRibosomes, context, space, grid);
-		initIngoingVirus(context, space, grid, numberOfInfectedCells);
+		this.initIngoingVirus(context, space, grid, numberOfInfectedCells, ingoingType);
 		
 		return context;
 	}
 	
-	private void initIngoingVirus(Context<Object> context, ContinuousSpace<Object> space, Grid grid, int numberOfInfectedCells) {
-		int randomEnteringChoice = RandomHelper.nextIntFromTo(0,1); 
-		if(randomEnteringChoice == 0)
+	private void initIngoingVirus(Context<Object> context, ContinuousSpace<Object> space, Grid grid, int numberOfInfectedCells, String ingoingType) {
+		//int randomEnteringChoice = RandomHelper.nextIntFromTo(0,1); 
+		if(ingoingType.equals("sac")) {
 			initializeSac(context, space, grid, numberOfInfectedCells);
-		else initializeGenes(context, space, grid, numberOfInfectedCells);
+		} else initializeGenes(context, space, grid, numberOfInfectedCells);
 		
 	}
 	
 	private void initializeSac(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
-		Sac newSac = new Sac(space, grid, numberOfInfectedCells);
+		Sac newSac = new Sac(context, space, grid, numberOfInfectedCells);
 		int x = RandomHelper.nextIntFromTo(60, 80);
 		int y = RandomHelper.nextIntFromTo(60, 80);
 		int z = RandomHelper.nextIntFromTo(60, 80);
@@ -84,7 +90,7 @@ public class HostCell implements ContextBuilder<Object> {
 	}
 	
 	private void initializeGenes(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
-		Gene newGene = new Gene(space, grid, numberOfInfectedCells);
+		Gene newGene = new Gene(context, space, grid, numberOfInfectedCells);
 		int x = RandomHelper.nextIntFromTo(60, 80);
 		int y = RandomHelper.nextIntFromTo(60, 80);
 		int z = RandomHelper.nextIntFromTo(60, 80);
@@ -95,34 +101,6 @@ public class HostCell implements ContextBuilder<Object> {
 		}
 		System.out.println("Sac init position " + x + " " + y + " " + z);
 	}
-	
-	//TUPLE SPACE OPERATIONS
-	
-	public void in(String name){
 		
-	}
-	
-	public void rd(String name){
-		
-	}
-	
-	public void rdp(String name){
-		
-	}
-	
-	public void inp(String name){
-		
-	}
-	
-	public void eval(String name){
-		
-	}
-	
-	public void out(Object object){
-		
-	}
-	
-	
-	
 
 }

@@ -3,7 +3,9 @@ package covidModelMP3DCC;
 import org.apache.commons.math3.geometry.Space;
 import org.apache.poi.util.SystemOutLogger;
 
+import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Direction;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -13,39 +15,35 @@ import repast.simphony.space.grid.GridPoint;
 
 public class Sac {
 
-	 private static final double MOVE_DISTANCE = 0.5; // Set the distance to move each tick
-	 private static final double EPSILON = 1; // Set a small value to add to the y coordinate
-	  
+	private static final double MOVE_DISTANCE = 0.5; // Set the distance to move each tick
+	private static final double EPSILON = 1; // Set a small value to add to the y coordinate
+	 
+	int[] randomPoint; 
 	ContinuousSpace<Object>space;
 	Grid<Object> grid;
+	Context context;
 	int numberOfInfectedCells;
 	
-	public Sac(ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
+	public Sac(Context context, ContinuousSpace<Object> space, Grid<Object> grid, int numberOfInfectedCells) {
+		this.context = context;
 		this.numberOfInfectedCells = numberOfInfectedCells;
 		this.space = space;
 		this.grid = grid;
+		this.randomPoint = this.getRandomLocation();
+	}
+	
+	private int[] getRandomLocation() {
+		int x = RandomHelper.nextIntFromTo(0, 50);
+		int y = RandomHelper.nextIntFromTo(0, 50);
+		int z = RandomHelper.nextIntFromTo(0, 50);
+		return new int[]{x,y,z};
 	}
 	
 	@ScheduledMethod(start = 1, interval = 10)
 	public void step1() {
 		System.out.println("Current sac position: " + this.grid.getLocation(this));
-		this.moveTowards(this.getCloserRibosome());
-	}
-	
-	private GridPoint getCloserRibosome() {
-		GridPoint closerRibosomePoint = null;
-		double closerDistance = Double.MAX_VALUE;
-		for(Object obj : this.grid.getObjects())
-			if(obj instanceof Ribosome) {
-				GridPoint gridObjPoint = this.grid.getLocation(obj);
-				double currentGridDistance = this.grid.getDistance(this.grid.getLocation(this), gridObjPoint);
-				if(currentGridDistance < closerDistance) {
-					closerDistance = currentGridDistance;
-					closerRibosomePoint = gridObjPoint;
-				}
-			}
-		System.out.println("Current closer ribosome position " + (int)closerRibosomePoint.getX() + " " + (int)closerRibosomePoint.getY() + " " + (int)closerRibosomePoint.getZ() + " current closer ribosome distance " + closerDistance);
-		return closerRibosomePoint;
+		this.moveTowards(new GridPoint(this.randomPoint[0],this.randomPoint[1],this.randomPoint[2]));
+		
 	}
 	
 	public void moveTowards(GridPoint pt) { 
@@ -70,7 +68,14 @@ public class Sac {
 		    
 			GridPoint currentGridLocation = this.grid.getLocation(this);
 			space.moveTo(this, currentGridLocation.getX(), currentGridLocation.getY(), currentGridLocation.getZ());
-		} else System.out.println("NCS");
+		} else {
+			Gene newGene = new Gene(this.context, this.space, this.grid, this.numberOfInfectedCells);
+			context.add(newGene);
+			GridPoint myLocation = this.grid.getLocation(this);
+			this.grid.moveTo(newGene, myLocation.getX(),myLocation.getY(),myLocation.getZ());
+			this.space.moveTo(newGene, myLocation.getX(),myLocation.getY(),myLocation.getZ());
+			context.remove(this);
+		}
 	}
 	
 }
