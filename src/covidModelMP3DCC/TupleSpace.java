@@ -5,14 +5,21 @@ import java.util.ArrayList;
 public class TupleSpace {
 
 	private ArrayList<Tuple>space;
-
+	
+	private static TupleSpace instance = null;
 	
 	public TupleSpace() {
-		this.space = new ArrayList<>();
+		this.space = new ArrayList<>();	
+	}
+	
+	public static TupleSpace getInstance() {
+		if(instance == null)
+			instance = new TupleSpace();
+		return instance;
 	}
 	
 	
-	public Tuple in(String name, Object object){
+	public Tuple in(String name){
 		Tuple chosenEntry = null;
 		for(Tuple currentEntry : this.space)
 			if(currentEntry.getName().equals(name))

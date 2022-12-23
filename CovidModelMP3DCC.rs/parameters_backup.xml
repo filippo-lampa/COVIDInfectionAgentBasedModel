@@ -10,7 +10,12 @@
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 											/>
-				<parameter name="numberOfInfectedCells" displayName="Number of infected cells" type="int" 
+				<parameter name="ingoingType" displayName="Way of infection" type="java.lang.String" 
+						defaultValue="sac" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+											/>
+				<parameter name="numberOfOutgoingInfectedCells" displayName="Number of new outgoing virus cells" type="int" 
 						defaultValue="5" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
