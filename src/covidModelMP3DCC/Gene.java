@@ -2,9 +2,7 @@ package covidModelMP3DCC;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.space.SpatialMath;
 import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 
@@ -12,20 +10,19 @@ public class Gene {
 
 	ContinuousSpace<Object> space;
 	Grid<Object> grid;
-	Context context;
+	Context<?> context;
 	TupleSpace tupleSpace;
 	
 	private static final double MOVE_DISTANCE = 0.5; // Set the distance to move each tick
-	private static final double EPSILON = 1; // Set a small value to add to the y coordinate
 	 
-	public Gene(Context context, ContinuousSpace<Object> space, Grid<Object> grid) {
-		this.tupleSpace = new TupleSpace();
+	public Gene(Context<?> context, ContinuousSpace<Object> space, Grid<Object> grid) {
+		this.tupleSpace = TupleSpace.getInstance();
 		this.context = context;
 		this.space = space;
 		this.grid = grid;
 	}
 	
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 1, interval = 3)
 	public void step1() {
 		this.moveTowards(this.getCloserRibosome());
 	}
@@ -42,7 +39,6 @@ public class Gene {
 					closerRibosomePoint = gridObjPoint;
 				}
 			}
-		System.out.println("Current closer ribosome position " + (int)closerRibosomePoint.getX() + " " + (int)closerRibosomePoint.getY() + " " + (int)closerRibosomePoint.getZ() + " current closer ribosome distance " + closerDistance);
 		return closerRibosomePoint;
 	}
 	
@@ -58,11 +54,6 @@ public class Gene {
 		    double directionY = pt.getY() - myPoint.getY();
 		    double directionZ = pt.getZ() - myPoint.getZ();
 
-		    System.out.println(directionX);
-		    System.out.println(directionY);
-		    System.out.println(directionZ);
-		    
-		    System.out.println("x: " + (int)(myPoint.getX() + directionX * MOVE_DISTANCE) + " y: "  + myPoint.getY() + (int)(directionY * MOVE_DISTANCE) + " z: " +  (int)(myPoint.getZ() + directionZ * MOVE_DISTANCE));
 		    // Move in the direction of the target
 		    grid.moveTo(this, (int)(myPoint.getX() + directionX * MOVE_DISTANCE), (int)(myPoint.getY() + directionY * MOVE_DISTANCE), (int)(myPoint.getZ() + directionZ * MOVE_DISTANCE));
 		    

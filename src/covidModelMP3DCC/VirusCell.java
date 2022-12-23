@@ -1,51 +1,62 @@
 package covidModelMP3DCC;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import repast.simphony.context.Context;
-import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
-import repast.simphony.util.ContextUtils;
 
 public class VirusCell {
 
 	ContinuousSpace<Object>space;
-	Context context;
-	Grid grid;
+	Context<Object> context;
+	Grid<Object> grid;
 	String state;
-	
+	GridPoint spawnPoint;
 	TupleSpace tupleSpace;
-	
-	private static final double MOVE_DISTANCE = 0.5; // Set the distance to move each tick
+	GridPoint randomLocationOutsideEnvironment;
+	private static final double MOVE_DISTANCE = 0.06; // Set the distance to move each tick
 
-	public VirusCell(Context context, ContinuousSpace<Object> space, Grid Grid, String state) {
+	public VirusCell(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, String state) {
 		this.state = state;
-		this.tupleSpace = new TupleSpace();
+		this.grid = grid;
+		this.context = context;
+		this.tupleSpace = TupleSpace.getInstance();
 		this.space = space;
 	}
 	
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 1, interval = 1, priority = 2)
 	public void step1() {
 		
+		if(this.spawnPoint == null)
+			this.spawnPoint = grid.getLocation(this);
+
 		if(this.state.equals("ingoing"))
 			this.moveTowards(this.getCloserRibosome(), state);
 		else if(this.state.equals("outgoing")) {
-			GridPoint randomLocationOutsideEnvironment = this.getRandomLocationOutsideEnvironment();
-			this.moveTowards(randomLocationOutsideEnvironment, null);
+			if(this.randomLocationOutsideEnvironment == null)
+				randomLocationOutsideEnvironment = this.getRandomLocationOutsideEnvironment();
+			this.moveBackwardsToRandomLocation();
+		} else if(this.state.equals("rejected")) {
+			this.moveBackwardsToSpawn();
 		}
 	}
 	
 	private GridPoint getRandomLocationOutsideEnvironment() {
-		int x = RandomHelper.nextIntFromTo(100, 200);
-		int y = RandomHelper.nextIntFromTo(100, 200);
-		int z = RandomHelper.nextIntFromTo(100, 200);
+		
+		int x = RandomHelper.nextIntFromTo(-200, 250);
+		while(!(x <= -50 || x >= 100)) {
+			x = RandomHelper.nextIntFromTo(-200, 250);
+		}
+		int y = RandomHelper.nextIntFromTo(-200, 250);
+		while(!(y <= -50 || y >= 100)) {
+			y = RandomHelper.nextIntFromTo(-200, 250);
+		}
+		int z = RandomHelper.nextIntFromTo(-200, 250);
+		while(!(z <= -50 || z >= 100)) {
+			z = RandomHelper.nextIntFromTo(-200, 250);
+		}
 		return new GridPoint(x,y,z);
 	}
 
@@ -61,27 +72,18 @@ public class VirusCell {
 					closerRibosomePoint = gridObjPoint;
 				}
 			}
-		System.out.println("Current closer ribosome position " + (int)closerRibosomePoint.getX() + " " + (int)closerRibosomePoint.getY() + " " + (int)closerRibosomePoint.getZ() + " current closer ribosome distance " + closerDistance);
 		return closerRibosomePoint;
 	}
 	
 	public void moveTowards(GridPoint pt, String ingoingType) { 
-		
 		GridPoint myPoint = grid.getLocation(this);
 		
-		double distance = Math.sqrt(Math.pow(pt.getX() - myPoint.getX(), 2) + Math.pow(pt.getY() - myPoint.getY(), 2) + Math.pow(pt.getZ() - myPoint.getZ(), 2));
-		
-		if (!(myPoint.getX() == 50 && myPoint.getY() == 50 && myPoint.getZ() == 50)) {
+		if (!((myPoint.getX() <= 50 && myPoint.getX() >= 0) && (myPoint.getY() <= 50 && myPoint.getY() >= 0) && (myPoint.getZ() <= 50 && myPoint.getZ() >= 0) )) {
 		    // Calculate the direction in which to move
 			double directionX = pt.getX() - myPoint.getX();
 		    double directionY = pt.getY() - myPoint.getY();
 		    double directionZ = pt.getZ() - myPoint.getZ();
-
-		    System.out.println(directionX);
-		    System.out.println(directionY);
-		    System.out.println(directionZ);
 		    
-		    System.out.println("x: " + (int)(myPoint.getX() + directionX * MOVE_DISTANCE) + " y: "  + myPoint.getY() + (int)(directionY * MOVE_DISTANCE) + " z: " +  (int)(myPoint.getZ() + directionZ * MOVE_DISTANCE));
 		    // Move in the direction of the target
 		    grid.moveTo(this, (int)(myPoint.getX() + directionX * MOVE_DISTANCE), (int)(myPoint.getY() + directionY * MOVE_DISTANCE), (int)(myPoint.getZ() + directionZ * MOVE_DISTANCE));
 		    
@@ -89,20 +91,55 @@ public class VirusCell {
 			space.moveTo(this, currentGridLocation.getX(), currentGridLocation.getY(), currentGridLocation.getZ());
 		} else {
 			Tuple tupleEntry = this.tupleSpace.in("cellula");
-
-			if(tupleEntry.object != null) {
+			if(tupleEntry != null) {
 			//Entry cellula disponibile e riservata a questa virus cell
 				this.initIngoingVirus(ingoingType);
 			} else {
 			//Entry cellula non disponibile
-			moveTowards(new GridPoint(-pt.getX(),-pt.getY(),-pt.getZ()),null);
+				this.state = "rejected";
 			}
 		}
 	}
 	
+	public void moveBackwardsToRandomLocation() { 
+		GridPoint myPoint = grid.getLocation(this);
+
+		if(!myPoint.equals(randomLocationOutsideEnvironment)) {
+			//Calculate the direction in which to move
+			double directionX = this.randomLocationOutsideEnvironment.getX() - myPoint.getX();
+			double directionY = this.randomLocationOutsideEnvironment.getY() - myPoint.getY();
+			double directionZ = this.randomLocationOutsideEnvironment.getZ() - myPoint.getZ();
+
+			// Move in the direction of the target
+			grid.moveTo(this, (int)(myPoint.getX() + directionX * MOVE_DISTANCE), (int)(myPoint.getY() + directionY * MOVE_DISTANCE), (int)(myPoint.getZ() + directionZ * MOVE_DISTANCE));
+
+			GridPoint currentGridLocation = this.grid.getLocation(this);
+			space.moveTo(this, currentGridLocation.getX(), currentGridLocation.getY(), currentGridLocation.getZ());
+		} else {
+			context.remove(this);
+		}
+	}
+
+	public void moveBackwardsToSpawn() { 
+		GridPoint myPoint = grid.getLocation(this);
+
+		if(!myPoint.equals(spawnPoint)) {
+			//Calculate the direction in which to move
+			double directionX = this.spawnPoint.getX() - myPoint.getX();
+			double directionY = this.spawnPoint.getY() - myPoint.getY();
+			double directionZ = this.spawnPoint.getZ() - myPoint.getZ();
+			
+			// Move in the direction of the target
+			grid.moveTo(this, (int)(myPoint.getX() + directionX * MOVE_DISTANCE), (int)(myPoint.getY() + directionY * MOVE_DISTANCE), (int)(myPoint.getZ() + directionZ * MOVE_DISTANCE));
+
+			GridPoint currentGridLocation = this.grid.getLocation(this);
+			space.moveTo(this, currentGridLocation.getX(), currentGridLocation.getY(), currentGridLocation.getZ());
+		} else {
+			context.remove(this);
+		}
+	}
 	
 	private void initIngoingVirus(String ingoingType) {
-		//int randomEnteringChoice = RandomHelper.nextIntFromTo(0,1); 
 		if(ingoingType.equals("sac")) {
 			initializeSac();
 		} else initializeGenes();
