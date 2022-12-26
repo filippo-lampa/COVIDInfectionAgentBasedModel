@@ -2,6 +2,8 @@ package covidModelMP3DCC;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -23,13 +25,16 @@ public class Ribosome {
 	}
 
 
-	@ScheduledMethod(start = 1, interval = 1, priority = 1)
+	@ScheduledMethod(start=1, interval=1, priority = 1)
+
 	public void step() {
 
 		Parameters p = RunEnvironment.getInstance().getParameters();			
 
-		int numberOfOutgoingInfectedCells = (Integer)p.getValue("numberOfOutgoingInfectedCells");
-
+		int numberOfOutgoingInfectedCells;
+		
+		numberOfOutgoingInfectedCells = (Integer)p.getValue("numberOfOutgoingInfectedCells");
+			
 		Tuple tuple = this.tupleSpace.rd("ribosome_call");
 		if(tuple != null) {
 

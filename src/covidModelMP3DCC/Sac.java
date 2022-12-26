@@ -1,6 +1,9 @@
 package covidModelMP3DCC;
 
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -30,7 +33,8 @@ public class Sac {
 		return new int[]{x,y,z};
 	}
 	
-	@ScheduledMethod(start = 1, interval = 1, priority = 4)
+	@ScheduledMethod(start=1, interval=1, priority = 4)
+
 	public void step1() {
 		this.moveTowards(new GridPoint(this.randomPoint[0],this.randomPoint[1],this.randomPoint[2]));
 		

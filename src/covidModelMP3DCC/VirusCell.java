@@ -1,7 +1,11 @@
 package covidModelMP3DCC;
 
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
@@ -16,6 +20,8 @@ public class VirusCell {
 	GridPoint spawnPoint;
 	TupleSpace tupleSpace;
 	GridPoint randomLocationOutsideEnvironment;
+	String wayOfInfection;
+
 	private static final double MOVE_DISTANCE = 0.06; // Set the distance to move each tick
 
 	public VirusCell(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, String state) {
@@ -24,11 +30,16 @@ public class VirusCell {
 		this.context = context;
 		this.tupleSpace = TupleSpace.getInstance();
 		this.space = space;
+		Parameters p = RunEnvironment.getInstance().getParameters();	
+		this.wayOfInfection = (String)p.getValue("wayOfInfection");
 	}
 	
-	@ScheduledMethod(start = 1, interval = 1, priority = 2)
+	@ScheduledMethod(start=1, interval=1, priority = 2)
+
 	public void step1() {
-		
+			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+
+		System.out.println(schedule.getTickCount());
 		if(this.spawnPoint == null)
 			this.spawnPoint = grid.getLocation(this);
 
@@ -66,6 +77,7 @@ public class VirusCell {
 		for(Object obj : this.grid.getObjects())
 			if(obj instanceof Ribosome) {
 				GridPoint gridObjPoint = this.grid.getLocation(obj);
+				System.out.println("ssssssssssss" + this.grid.getLocation(this)+ " " + gridObjPoint);
 				double currentGridDistance = this.grid.getDistance(this.grid.getLocation(this), gridObjPoint);
 				if(currentGridDistance < closerDistance) {
 					closerDistance = currentGridDistance;
@@ -76,6 +88,7 @@ public class VirusCell {
 	}
 	
 	public void moveTowards(GridPoint pt, String ingoingType) { 
+
 		GridPoint myPoint = grid.getLocation(this);
 		
 		if (!((myPoint.getX() <= 50 && myPoint.getX() >= 0) && (myPoint.getY() <= 50 && myPoint.getY() >= 0) && (myPoint.getZ() <= 50 && myPoint.getZ() >= 0) )) {
@@ -93,7 +106,7 @@ public class VirusCell {
 			Tuple tupleEntry = this.tupleSpace.in("cellula");
 			if(tupleEntry != null) {
 			//Entry cellula disponibile e riservata a questa virus cell
-				this.initIngoingVirus(ingoingType);
+				this.initIngoingVirus(this.wayOfInfection);
 			} else {
 			//Entry cellula non disponibile
 				this.state = "rejected";

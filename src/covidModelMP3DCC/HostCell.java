@@ -9,8 +9,10 @@ import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.parameter.ParametersCreator;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.RandomCartesianAdder;
@@ -45,12 +47,34 @@ public class HostCell extends DefaultContext<Object> implements ContextBuilder<O
 
  		this.context = context;
  		
-		Parameters p = RunEnvironment.getInstance().getParameters();			
-
+ 		Parameters p;
+ 		
+		//Check for test purpose
+ 		if(RunEnvironment.getInstance() != null) {
+ 			p = RunEnvironment.getInstance().getParameters();
+ 			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+ 		    ScheduleParameters params = ScheduleParameters.createRepeating(1, 20, 5);
+ 		    schedule.schedule(params, this, "getIncomingInfectedCells");
+ 		}
+ 		else {
+ 			//test case
+ 			Schedule schedule = new Schedule ();
+ 			ParametersCreator pc = new ParametersCreator();
+ 			pc.addParameter("wayOfInfection", String.class, "sac", false);
+ 			pc.addParameter("numberOfIngoingVirusCellsEachTimeTic", int.class, 3, false);
+ 			pc.addParameter("numberOfRibosomes", int.class, 3, false);
+ 			p = pc.createParameters();
+ 			RunEnvironment.init( schedule , null , p , true );	
+ 			ISchedule schedule1 = RunEnvironment.getInstance().getCurrentSchedule();
+ 		    ScheduleParameters params = ScheduleParameters.createRepeating(1, 1, 5);
+ 		    schedule1.schedule(params, this, "testPurpose");
+ 		}
+		
+		int numberOfRibosomes;
 		
 		this.numberOfIngoingVirusCellsEachTimeTic = (Integer)p.getValue("numberOfIngoingVirusCellsEachTimeTic");
-
-		int numberOfRibosomes = (Integer)p.getValue("numberOfRibosomes");
+		
+		numberOfRibosomes = (Integer)p.getValue("numberOfRibosomes");
 		
 		this.initializeRibosomes(numberOfRibosomes, context, space, grid);
 		
@@ -59,17 +83,16 @@ public class HostCell extends DefaultContext<Object> implements ContextBuilder<O
 		this.tupleSpace = TupleSpace.getInstance();
 		
 		this.tupleSpace.out("cellula", this);
-				
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-	    ScheduleParameters params = ScheduleParameters.createRepeating(1, 20, 5);
-	    schedule.schedule(params, this, "getIncomingInfectedCells");
 		
 		return context;
 	}
 	
-	
+	public void testPurpose() {
+		
+	}
 	
 	public void getIncomingInfectedCells() {
+		
 		VirusCell newVirusCell;
 		int x,y,z;
 		for(int i=0; i<numberOfIngoingVirusCellsEachTimeTic; i++) {	
@@ -88,7 +111,7 @@ public class HostCell extends DefaultContext<Object> implements ContextBuilder<O
 
 			space.moveTo(newVirusCell,x,y,z);
 			grid.moveTo(newVirusCell, x,y,z);
-			//}
+			
 		}
 	}
 		

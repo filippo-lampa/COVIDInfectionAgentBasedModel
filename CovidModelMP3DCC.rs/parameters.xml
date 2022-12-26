@@ -10,7 +10,7 @@
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 											/>
-				<parameter name="ingoingType" displayName="Way of infection" type="java.lang.String" 
+				<parameter name="wayOfInfection" displayName="Way of infection" type="java.lang.String" 
 						defaultValue="sac" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
