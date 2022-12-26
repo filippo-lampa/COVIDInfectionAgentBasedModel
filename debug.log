@@ -562,3 +562,99 @@ Caused by: java.lang.NullPointerException
 	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
 	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
 	... 6 more
+FATAL [Thread-2] 2022-12-26T21:37:02,318 GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (35.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129) ~[bin/:]
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231) ~[bin/:]
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352) ~[bin/:]
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52) ~[bin/:]
+	at java.lang.Thread.run(Thread.java:829) ~[?:?]
+Caused by: java.lang.reflect.InvocationTargetException
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more
+Caused by: java.lang.NullPointerException
+	at repast.simphony.space.grid.AbstractGrid.getDistanceSq(AbstractGrid.java:458) ~[bin/:]
+	at repast.simphony.space.grid.AbstractGrid.getDistance(AbstractGrid.java:444) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.getCloserRibosome(VirusCell.java:84) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.step1(VirusCell.java:50) ~[bin/:]
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more
+FATAL [Thread-2] 2022-12-26T21:41:20,747 GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (18.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129) ~[bin/:]
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231) ~[bin/:]
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352) ~[bin/:]
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52) ~[bin/:]
+	at java.lang.Thread.run(Thread.java:829) ~[?:?]
+Caused by: java.lang.reflect.InvocationTargetException
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more
+Caused by: java.lang.NullPointerException
+	at repast.simphony.space.grid.AbstractGrid.getDistanceSq(AbstractGrid.java:458) ~[bin/:]
+	at repast.simphony.space.grid.AbstractGrid.getDistance(AbstractGrid.java:444) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.getCloserRibosome(VirusCell.java:87) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.step1(VirusCell.java:53) ~[bin/:]
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more
+FATAL [Thread-2] 2022-12-26T21:44:00,136 GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (22.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129) ~[bin/:]
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231) ~[bin/:]
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352) ~[bin/:]
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52) ~[bin/:]
+	at java.lang.Thread.run(Thread.java:829) ~[?:?]
+Caused by: java.lang.reflect.InvocationTargetException
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more
+Caused by: java.lang.NullPointerException
+	at repast.simphony.space.grid.AbstractGrid.getDistanceSq(AbstractGrid.java:458) ~[bin/:]
+	at repast.simphony.space.grid.AbstractGrid.getDistance(AbstractGrid.java:444) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.getCloserRibosome(VirusCell.java:87) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.step1(VirusCell.java:53) ~[bin/:]
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more
+FATAL [Thread-2] 2022-12-26T21:46:54,833 GUIScheduleRunner - RunTimeException when running the schedule
+Current tick (24.0)
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:129) ~[bin/:]
+	at repast.simphony.engine.schedule.DefaultAction.execute(DefaultAction.java:38) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.executeList(ScheduleGroup.java:205) ~[bin/:]
+	at repast.simphony.engine.schedule.ScheduleGroup.execute(ScheduleGroup.java:231) ~[bin/:]
+	at repast.simphony.engine.schedule.Schedule.execute(Schedule.java:352) ~[bin/:]
+	at repast.simphony.ui.GUIScheduleRunner$ScheduleLoopRunnable.run(GUIScheduleRunner.java:52) ~[bin/:]
+	at java.lang.Thread.run(Thread.java:829) ~[?:?]
+Caused by: java.lang.reflect.InvocationTargetException
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more
+Caused by: java.lang.NullPointerException
+	at repast.simphony.space.grid.AbstractGrid.getDistanceSq(AbstractGrid.java:458) ~[bin/:]
+	at repast.simphony.space.grid.AbstractGrid.getDistance(AbstractGrid.java:444) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.getCloserRibosome(VirusCell.java:89) ~[bin/:]
+	at covidModelMP3DCC.VirusCell.step1(VirusCell.java:54) ~[bin/:]
+	at covidModelMP3DCC.VirusCell$$FastClassByCGLIB$$3f30d929.invoke(<generated>) ~[cglib-nodep-2.2.3.jar:]
+	at net.sf.cglib.reflect.FastMethod.invoke(FastMethod.java:53) ~[cglib-nodep-2.2.3.jar:]
+	at repast.simphony.engine.schedule.CallBackAction.execute(CallBackAction.java:127) ~[bin/:]
+	... 6 more

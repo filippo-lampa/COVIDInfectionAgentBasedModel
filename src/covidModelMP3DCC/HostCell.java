@@ -28,6 +28,7 @@ public class HostCell extends DefaultContext<Object> implements ContextBuilder<O
 	Context<Object> context;
 	Grid<Object> grid;
 	ContinuousSpace<Object> space;
+	ISchedule schedule;
 	
 	int numberOfIngoingVirusCellsEachTimeTic;
 	
@@ -52,9 +53,9 @@ public class HostCell extends DefaultContext<Object> implements ContextBuilder<O
 		//Check for test purpose
  		if(RunEnvironment.getInstance() != null) {
  			p = RunEnvironment.getInstance().getParameters();
- 			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+ 			this.schedule = RunEnvironment.getInstance().getCurrentSchedule();
  		    ScheduleParameters params = ScheduleParameters.createRepeating(1, 20, 5);
- 		    schedule.schedule(params, this, "getIncomingInfectedCells");
+ 		    this.schedule.schedule(params, this, "getIncomingInfectedCells");
  		}
  		else {
  			//test case
@@ -63,11 +64,14 @@ public class HostCell extends DefaultContext<Object> implements ContextBuilder<O
  			pc.addParameter("wayOfInfection", String.class, "sac", false);
  			pc.addParameter("numberOfIngoingVirusCellsEachTimeTic", int.class, 3, false);
  			pc.addParameter("numberOfRibosomes", int.class, 3, false);
+ 			pc.addParameter("numberOfOutgoingInfectedCells", int.class, 3, false);
  			p = pc.createParameters();
+ 		
+ 				System.out.println(p.getValue("wayOfInfection"));
  			RunEnvironment.init( schedule , null , p , true );	
- 			ISchedule schedule1 = RunEnvironment.getInstance().getCurrentSchedule();
+ 			this.schedule = schedule;
  		    ScheduleParameters params = ScheduleParameters.createRepeating(1, 1, 5);
- 		    schedule1.schedule(params, this, "testPurpose");
+ 		    this.schedule.schedule(params, this, "testPurpose");
  		}
 		
 		int numberOfRibosomes;
@@ -108,6 +112,9 @@ public class HostCell extends DefaultContext<Object> implements ContextBuilder<O
 			}
 
 			context.add(newVirusCell);
+			
+			//test purposes scheduling
+			this.schedule.schedule(newVirusCell);
 
 			space.moveTo(newVirusCell,x,y,z);
 			grid.moveTo(newVirusCell, x,y,z);

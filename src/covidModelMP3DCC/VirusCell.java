@@ -2,8 +2,8 @@ package covidModelMP3DCC;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
-import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
@@ -21,7 +21,9 @@ public class VirusCell {
 	TupleSpace tupleSpace;
 	GridPoint randomLocationOutsideEnvironment;
 	String wayOfInfection;
-
+	ISchedule schedule;
+	ISchedulableAction step1ScheduledAction;
+	
 	private static final double MOVE_DISTANCE = 0.06; // Set the distance to move each tick
 
 	public VirusCell(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, String state) {
@@ -34,23 +36,24 @@ public class VirusCell {
 		this.wayOfInfection = (String)p.getValue("wayOfInfection");
 	}
 	
-	@ScheduledMethod(start=1, interval=1, priority = 2)
+
+	@ScheduledMethod(start=1, interval = 1, priority = 2)
 
 	public void step1() {
-			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		//Check the case in which the scheduled action ran but this cell has already been removed from the context
+		if(this != null && this.grid.getLocation(this) != null) {
+			if(this.spawnPoint == null)
+				this.spawnPoint = grid.getLocation(this);
 
-		System.out.println(schedule.getTickCount());
-		if(this.spawnPoint == null)
-			this.spawnPoint = grid.getLocation(this);
-
-		if(this.state.equals("ingoing"))
-			this.moveTowards(this.getCloserRibosome(), state);
-		else if(this.state.equals("outgoing")) {
-			if(this.randomLocationOutsideEnvironment == null)
-				randomLocationOutsideEnvironment = this.getRandomLocationOutsideEnvironment();
-			this.moveBackwardsToRandomLocation();
-		} else if(this.state.equals("rejected")) {
-			this.moveBackwardsToSpawn();
+			if(this.state.equals("ingoing"))
+				this.moveTowards(this.getCloserRibosome(), state);
+			else if(this.state.equals("outgoing")) {
+				if(this.randomLocationOutsideEnvironment == null)
+					randomLocationOutsideEnvironment = this.getRandomLocationOutsideEnvironment();
+				this.moveBackwardsToRandomLocation();
+			} else if(this.state.equals("rejected")) {
+				this.moveBackwardsToSpawn();
+			}
 		}
 	}
 	
@@ -77,7 +80,6 @@ public class VirusCell {
 		for(Object obj : this.grid.getObjects())
 			if(obj instanceof Ribosome) {
 				GridPoint gridObjPoint = this.grid.getLocation(obj);
-				System.out.println("ssssssssssss" + this.grid.getLocation(this)+ " " + gridObjPoint);
 				double currentGridDistance = this.grid.getDistance(this.grid.getLocation(this), gridObjPoint);
 				if(currentGridDistance < closerDistance) {
 					closerDistance = currentGridDistance;
@@ -166,7 +168,7 @@ public class VirusCell {
 
 		space.moveTo(newSac,thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
 		grid.moveTo(newSac, thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
-
+		
 		context.remove(this);
 	}
 	
@@ -177,7 +179,9 @@ public class VirusCell {
 
 		space.moveTo(newGene,thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
 		grid.moveTo(newGene, thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
-
+		
+		this.schedule.schedule(newGene);
+		
 		context.remove(this);
 	}
 	

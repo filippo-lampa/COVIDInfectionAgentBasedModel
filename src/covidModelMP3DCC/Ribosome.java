@@ -3,7 +3,6 @@ package covidModelMP3DCC;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
-import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -16,8 +15,10 @@ public class Ribosome {
 	ContinuousSpace<Object> space;
 	Grid<Object> grid;
 	TupleSpace tupleSpace;
-
+	ISchedule schedule;
+	
 	public Ribosome(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid) {
+		this.schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		this.context = context;
 		this.tupleSpace = TupleSpace.getInstance();
 		this.space = space;
@@ -36,8 +37,8 @@ public class Ribosome {
 		numberOfOutgoingInfectedCells = (Integer)p.getValue("numberOfOutgoingInfectedCells");
 			
 		Tuple tuple = this.tupleSpace.rd("ribosome_call");
+		
 		if(tuple != null) {
-
 			VirusCell newCell;
 			GridPoint thisPoint = this.grid.getLocation(this);
 			GridPoint genePoint = (GridPoint)tuple.getObject();
@@ -46,6 +47,8 @@ public class Ribosome {
 				this.tupleSpace.in("ribosome_call");
 				for(int i=0; i<numberOfOutgoingInfectedCells; i++) {
 					newCell = new VirusCell(this.context, this.space, this.grid, "outgoing");
+					//test purposes scheduling
+					this.schedule.schedule(newCell);
 					context.add(newCell);
 					this.grid.moveTo(newCell, thisPoint.getX(), thisPoint.getY(), thisPoint.getZ());
 					this.space.moveTo(newCell, thisPoint.getX(), thisPoint.getY(), thisPoint.getZ());
