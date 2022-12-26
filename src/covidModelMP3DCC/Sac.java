@@ -1,6 +1,8 @@
 package covidModelMP3DCC;
 
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -15,8 +17,10 @@ public class Sac {
 	ContinuousSpace<Object>space;
 	Grid<Object> grid;
 	Context<Object> context;
-	
+	ISchedule schedule;
+
 	public Sac(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid) {
+		this.schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		this.context = context;
 		this.space = space;
 		this.grid = grid;
@@ -30,8 +34,11 @@ public class Sac {
 		return new int[]{x,y,z};
 	}
 	
-	@ScheduledMethod(start = 1, interval = 1, priority = 4)
+	@ScheduledMethod(start=1, interval=1, priority = 4)
+
 	public void step1() {
+		//test purposes scheduling
+		this.schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		this.moveTowards(new GridPoint(this.randomPoint[0],this.randomPoint[1],this.randomPoint[2]));
 		
 	}
@@ -56,6 +63,8 @@ public class Sac {
 		} else {
 			Gene newGene = new Gene(this.context, this.space, this.grid);
 			context.add(newGene);
+			//test purposes scheduling
+			this.schedule.schedule(newGene);
 			GridPoint myLocation = this.grid.getLocation(this);
 			this.grid.moveTo(newGene, myLocation.getX(),myLocation.getY(),myLocation.getZ());
 			this.space.moveTo(newGene, myLocation.getX(),myLocation.getY(),myLocation.getZ());

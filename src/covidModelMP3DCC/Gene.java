@@ -22,7 +22,8 @@ public class Gene {
 		this.grid = grid;
 	}
 	
-	@ScheduledMethod(start = 1, interval = 3)
+	@ScheduledMethod(start=1, interval=1, priority = 4)
+
 	public void step1() {
 		this.moveTowards(this.getCloserRibosome());
 	}

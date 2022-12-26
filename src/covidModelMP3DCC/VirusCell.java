@@ -1,7 +1,11 @@
 package covidModelMP3DCC;
 
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedulableAction;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.grid.Grid;
@@ -16,6 +20,10 @@ public class VirusCell {
 	GridPoint spawnPoint;
 	TupleSpace tupleSpace;
 	GridPoint randomLocationOutsideEnvironment;
+	String wayOfInfection;
+	ISchedule schedule;
+	ISchedulableAction step1ScheduledAction;
+	
 	private static final double MOVE_DISTANCE = 0.06; // Set the distance to move each tick
 
 	public VirusCell(Context<Object> context, ContinuousSpace<Object> space, Grid<Object> grid, String state) {
@@ -24,22 +32,28 @@ public class VirusCell {
 		this.context = context;
 		this.tupleSpace = TupleSpace.getInstance();
 		this.space = space;
+		Parameters p = RunEnvironment.getInstance().getParameters();	
+		this.wayOfInfection = (String)p.getValue("wayOfInfection");
 	}
 	
-	@ScheduledMethod(start = 1, interval = 1, priority = 2)
-	public void step1() {
-		
-		if(this.spawnPoint == null)
-			this.spawnPoint = grid.getLocation(this);
 
-		if(this.state.equals("ingoing"))
-			this.moveTowards(this.getCloserRibosome(), state);
-		else if(this.state.equals("outgoing")) {
-			if(this.randomLocationOutsideEnvironment == null)
-				randomLocationOutsideEnvironment = this.getRandomLocationOutsideEnvironment();
-			this.moveBackwardsToRandomLocation();
-		} else if(this.state.equals("rejected")) {
-			this.moveBackwardsToSpawn();
+	@ScheduledMethod(start=1, interval = 1, priority = 2)
+
+	public void step1() {
+		//Check the case in which the scheduled action ran but this cell has already been removed from the context
+		if(this != null && this.grid.getLocation(this) != null) {
+			if(this.spawnPoint == null)
+				this.spawnPoint = grid.getLocation(this);
+
+			if(this.state.equals("ingoing"))
+				this.moveTowards(this.getCloserRibosome(), state);
+			else if(this.state.equals("outgoing")) {
+				if(this.randomLocationOutsideEnvironment == null)
+					randomLocationOutsideEnvironment = this.getRandomLocationOutsideEnvironment();
+				this.moveBackwardsToRandomLocation();
+			} else if(this.state.equals("rejected")) {
+				this.moveBackwardsToSpawn();
+			}
 		}
 	}
 	
@@ -76,6 +90,7 @@ public class VirusCell {
 	}
 	
 	public void moveTowards(GridPoint pt, String ingoingType) { 
+
 		GridPoint myPoint = grid.getLocation(this);
 		
 		if (!((myPoint.getX() <= 50 && myPoint.getX() >= 0) && (myPoint.getY() <= 50 && myPoint.getY() >= 0) && (myPoint.getZ() <= 50 && myPoint.getZ() >= 0) )) {
@@ -93,7 +108,7 @@ public class VirusCell {
 			Tuple tupleEntry = this.tupleSpace.in("cellula");
 			if(tupleEntry != null) {
 			//Entry cellula disponibile e riservata a questa virus cell
-				this.initIngoingVirus(ingoingType);
+				this.initIngoingVirus(this.wayOfInfection);
 			} else {
 			//Entry cellula non disponibile
 				this.state = "rejected";
@@ -153,7 +168,7 @@ public class VirusCell {
 
 		space.moveTo(newSac,thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
 		grid.moveTo(newSac, thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
-
+		
 		context.remove(this);
 	}
 	
@@ -164,7 +179,9 @@ public class VirusCell {
 
 		space.moveTo(newGene,thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
 		grid.moveTo(newGene, thisCellPoint.getX(),thisCellPoint.getY(),thisCellPoint.getZ());
-
+		
+		this.schedule.schedule(newGene);
+		
 		context.remove(this);
 	}
 	
